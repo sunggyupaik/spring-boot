@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
 <!-- Required meta tags -->
 <meta charset="utf-8">
@@ -27,12 +27,13 @@
 					tabindex="-1" aria-disabled="true">Disabled</a></li>
 			</ul>
 		</div>
-		<div class="card-body">
-			아이디 <input type="text" class="id"><br>
-			비밀번호 <input type="password" class="password"><br>
-			이름  <input type="text" class="name"><br>
+		<form class="card-body" action="/create" method="post">
+			아이디 <input type="text" name="id"><br>
+			비밀번호 <input type="password" name="password"><br>
+			이름  <input type="text" name="name"><br>
+			이메일 <input tpye="email" name="email"><br>
 			<input type = "submit" value="제출하기">
-		</div>
+		</form>
 	</div>
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->

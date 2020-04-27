@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<table>
+	<thead>
+		<tr>
+			<th>사용자아이디</th>
+			<th>이름</th>
+			<th>이메일</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#Users}}
+		<tr>
+			<th>{{Id}}</th>
+			<td>{{name}}</td>
+			<td>{{email}}</td>
+		</tr>
+		{{/Users}}
+	</tbody>
+</table>
+
+</body>
+</html>
