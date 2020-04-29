@@ -46,8 +46,13 @@ public class UserController {
 		//로그인이 정상적으로 되면 session에 user 정보 저장
 		System.out.println("Login Success");
 		Session.setAttribute("user", user);
-		
 		return"redirect:/";
+	}
+	
+	@GetMapping("logout")
+	public String logout(HttpSession session) {
+		session.removeAttribute("user");
+		return "redirect:/";
 	}
 	
 	@GetMapping("/form")
