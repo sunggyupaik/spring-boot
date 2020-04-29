@@ -16,76 +16,97 @@ import net.melon9751.domain.UserRepository;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@GetMapping("/loginForm")
 	public String loginForm() {
 		return "/user/login";
 	}
-	
+
 	@PostMapping("/login")
 	public String login(String userId, String password, HttpSession Session) {
-		
-		//userId를 primary key로 user 정보를 조회
+
+		// userId를 primary key로 user 정보를 조회
 		User user = userRepository.findByUserId(userId);
-		
-		//user의 정보가 없으면 다시 로그인창
-		if(user == null) {
+
+		// user의 정보가 없으면 다시 로그인창
+		if (user == null) {
 			System.out.println("Login Failed");
 			return "rediret:/users/loginForm";
 		}
-		
-		//비밀번호가 다르면 다시 로그인창
-		if(!password.equals(user.getPassword())) {
+
+		// 비밀번호가 다르면 다시 로그인창
+		if (!password.equals(user.getPassword())) {
 			System.out.println("Login Failed");
 			return "rediret:/users/loginForm";
 		}
-		
-		//로그인이 정상적으로 되면 session에 user 정보 저장
+
+		// 로그인이 정상적으로 되면 session에 user 정보 저장
 		System.out.println("Login Success");
-		Session.setAttribute("user", user);
-		return"redirect:/";
-	}
-	
-	@GetMapping("logout")
-	public String logout(HttpSession session) {
-		session.removeAttribute("user");
+		Session.setAttribute("sessionedUser", user);
 		return "redirect:/";
 	}
-	
+
+	@GetMapping("logout")
+	public String logout(HttpSession session) {
+		session.removeAttribute("sessionedUser");
+		return "redirect:/";
+	}
+
 	@GetMapping("/form")
 	public String form() {
-		return "/user/form";
+		return "/users/form";
 	}
-	
+
 	@PostMapping("")
 	public String create(User user) {
 		System.out.println("user" + user);
 		userRepository.save(user);
 		return "redirect:/users";
 	}
-	
+
 	@GetMapping("")
 	public String list(Model model) {
 		model.addAttribute("users", userRepository.findAll());
-		return "/user/list";
+		return "/users/list";
 	}
-	
+
+	// "개인정보 수정" 클릭 시,
 	@GetMapping("/{Id}/form")
-	public String updateForm(@PathVariable Long Id, Model model) {
-		System.out.println("updateForm Controller");
+	public String updateForm(@PathVariable Long Id, Model model, HttpSession session) {
+		Object tempUser = session.getAttribute("sessionedUser");
+		if (tempUser == null) {
+			return "redirect:/users/loginForm";
+		}
+
+		User sessionUser = (User) tempUser;
+		if(!(sessionUser.getId() == Id)) {
+			throw new IllegalStateException("자신의 정보만 수정 할 수 있습니다.");
+		}
+		
 		User user = userRepository.findById(Id).get();
 		model.addAttribute("user", user);
 		return "/user/updateForm";
 	}
-	
+
+	// "개인정보 수정"을 완료하기 확인 시,
 	@PostMapping("/{Id}")
-	public String update(@PathVariable Long Id, User newUser) {
+	public String update(@PathVariable Long Id, User updatedUser, HttpSession session) {
+		Object tempUser = session.getAttribute("sessionedUser");
+		if (tempUser == null) {
+			return "redirect:/users/loginForm";
+		}
+
+		User sessionUser = (User) tempUser;
+		if(!(sessionUser.getId() == Id)) {
+			throw new IllegalStateException("자신의 정보만 수정 할 수 있습니다.");
+		}
+		
 		User user = userRepository.findById(Id).get();
-		user.update(newUser);
+		user.update(updatedUser);
 		userRepository.save(user);
-		return "/redirect/users";
+		return "/redirect:/users";
 	}
 }
