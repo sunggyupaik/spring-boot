@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import net.melon9751.domain.Question;
 import net.melon9751.domain.QuestionRepository;
+import net.melon9751.domain.Result;
 import net.melon9751.domain.User;
 
 @Controller
@@ -54,58 +55,58 @@ public class QuestionController {
 	// 게시글을 수정하고 싶어서 수정을 누른 경우
 	@GetMapping("{Id}/form")
 	public String updateForm(@PathVariable Long Id, Model model, HttpSession session) {
-		try {
-			Question question = questionRepository.findById(Id).get();
-			hasPermission(session, question);
-			model.addAttribute("question", question);
-			return "/qna/updateForm";
-		} catch (IllegalStateException e) {
-			model.addAttribute("errorMessage", e.getMessage());
+		Question question = questionRepository.findById(Id).get();
+		Result result = valid(session, question);
+		if (!result.isValid()) {
+			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "redirect:/user/login";
 		}
+		model.addAttribute("question", question);
+		return "/qna/show";
 	}
 
-	// 권한여부 boolean 메소드 작성
-	private boolean hasPermission(HttpSession session, Question question) {
-		if (!HttpSessionUtils.isLoginUser(session))
-			throw new IllegalStateException("로그인이 필요합니다");
-
-		User loginUser = HttpSessionUtils.getUserfromSession(session);
-		if (!question.isSameWriter(loginUser)) {
-			throw new IllegalStateException("자신이 쓴 글만 수정, 삭제가 가능합니다.");
-		}
-
-		return false;
-	}
 
 	// PUT은 "기존에 있던 데이터를 변경"
 	// 게시글을 다 수정하고 완료를 눌렀을 때
 	@PostMapping("/{Id}/update")
 	public String update(@PathVariable Long Id, String title, String contents, Model model, HttpSession session) {
-		try {
-			Question question = questionRepository.findById(Id).get();
-			hasPermission(session, question);
-			question.update(title, contents);
-			questionRepository.save(question);
-			return String.format("redirect:/questions/%d", Id);
-		} catch (IllegalStateException e) {
-			model.addAttribute("errorMessage", e.getMessage());
+		Question question = questionRepository.findById(Id).get();
+		Result result = valid(session, question);
+		if (!result.isValid()) {
+			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "redirect:/user/login";
 		}
+
+		question.update(title, contents);
+		questionRepository.save(question);
+		return String.format("redirect:/questions/%d", Id);
+
+	}
+
+	private Result valid(HttpSession session, Question question) {
+		if (!HttpSessionUtils.isLoginUser(session)) {
+			return Result.fail("로그인이 필요합니다.");
+		}
+
+		User loginUser = HttpSessionUtils.getUserfromSession(session);
+		if (!question.isSameWriter(loginUser)) {
+			return Result.fail("자신이 쓴 글만 수정, 삭제가 가능합니다.");
+		}
+
+		return Result.ok();
 	}
 
 	// DELETE는 "해당 내용을 삭제"
 	// 게시글 삭제를 눌렀을 때
 	@PostMapping("/{Id}/delete")
 	public String delete(@PathVariable Long Id, Model model, HttpSession session) {
-		try {
-			Question question = questionRepository.findById(Id).get();
-			hasPermission(session, question);
-			questionRepository.deleteById(Id);
-			return "redirect:/";
-		} catch (IllegalStateException e) {
-			model.addAttribute("errorMessage", e.getMessage());
+		Question question = questionRepository.findById(Id).get();
+		Result result = valid(session, question);
+		if (!result.isValid()) {
+			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "redirect:/user/login";
 		}
+		questionRepository.deleteById(Id);
+		return "redirect:/";
 	}
 }

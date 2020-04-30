@@ -1,6 +1,7 @@
 package net.melon9751.domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -32,6 +33,12 @@ public class Answer {
 	private String contents;
 	
 	private LocalDateTime createDate;
+	
+	public String getFormattedCreateDate() {
+		if(createDate == null)
+			return "";
+		return createDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
+	}
 	
 	public Answer() {}
 	
