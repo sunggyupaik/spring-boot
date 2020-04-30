@@ -55,6 +55,7 @@ public class UserController {
 		return "redirect:/";
 	}
 
+	//"로그아웃" 버튼 클릭 시
 	@GetMapping("logout")
 	public String logout(HttpSession session) {
 		session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);
