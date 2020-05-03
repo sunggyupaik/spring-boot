@@ -12,9 +12,10 @@ public class HomeController {
 	@Autowired
 	private QuestionRepository questionRepository;
 	
-	@GetMapping("")
+	@GetMapping("/")
 	public String home(Model model) {
 		model.addAttribute("questions", questionRepository.findAll());
+		System.out.println("초기화면");
 		return "index";
 	}
 }

@@ -1,12 +1,52 @@
 package net.melon9751;
 
+import static springfox.documentation.builders.PathSelectors.regex;
+
+//springboot.tistory.com/23 [스프링부트는 사랑입니다]
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
+@EnableJpaAuditing //자동으로 현재시간 추가, 수정 될 때 자동으로 저장
+@EnableSwagger2
 public class Melon9751Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Melon9751Application.class, args);
 	}
+	
+	@Bean
+    public Docket newsApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("melon9751")
+                .apiInfo(apiInfo())
+                .select()
+                .paths(PathSelectors.ant("/api/**"))
+                .build();
+    }
+     
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("My Melon API")
+                .description("My Melon API")
+                .termsOfServiceUrl("http://www-03.ibm.com/software/sla/sladb.nsf/sla/bm?Open")
+                .contact("Niklas Heidloff")
+                .license("Apache License Version 2.0")
+                .licenseUrl("https://github.com/IBM-Bluemix/news-aggregator/blob/master/LICENSE")
+                .version("2.0")
+                .build();
+    }
+
+
+	
 }

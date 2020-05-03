@@ -16,7 +16,7 @@
           <div class="content-main">
               <article class="article">
                   <div class="article-header">
-              <>        <div class="article-header-thumb">
+                      <div class="article-header-thumb">
                           <img src="https://graph.facebook.com/v2.3/100000059371774/picture" class="article-author-thumb" alt="">
                       </div>
                       <div class="article-header-text">
@@ -49,7 +49,7 @@
 
               <div class="qna-comment">
                   <div class="qna-comment-slipp">
-                      <p class="qna-comment-count"><strong>2</strong>개의 의견</p>
+                      <p class="qna-comment-count"><strong>{{countOfAnswer}}</strong>개의 의견</p>
                       <div class="qna-comment-slipp-articles">
 						  {{#answers}}
                           <article class="article" id="answer-1405">
@@ -70,20 +70,17 @@
                               <div class="article-util">
                                   <ul class="article-util-list">
                                       <li>
-                                          <a class="link-modify-article" href="/questions/413/answers/1405/form">수정</a>
+                                      	<a class="link-modify-article" href="/questions/413/answers/1405/form">수정</a>
                                       </li>
                                       <li>
-                                          <form class="delete-answer-form" action="/questions/413/answers/1405" method="POST">
-                                              <input type="hidden" name="_method" value="DELETE">
-                                              <button type="submit" class="delete-answer-button">삭제</button>
-                                          </form>
-                                      </li>
+									  	<a class="link-delete-article2" href="/api/questions/{{question.Id}}/answers/{{Id}}">삭제</a>
+									  </li>
                                   </ul>
                               </div>
                           </article>
                           {{/answers}}
                          
-                          <form class="submit-write" method="post" action="/questions/{{Id}}/answers">
+                          <form class="answer-write" method="post" action="/api/questions/{{Id}}/answers">
                               <div class="form-group" style="padding:14px;">
                                   <textarea class="form-control" placeholder="Update your status" name="contents"></textarea>
                               </div>
@@ -98,6 +95,34 @@
         {{/question}}
     </div>
 </div>
+
+<!--  이곳은 새로 댓글을 다는 것을 실시간으로 추가해 주기 위해 만든 script  -->
+<script type="text/template" id="answerTemplate">
+	<article class="article">
+		<div class="article-header">
+			<div class="article-header-thumb">
+				<img src="https://graph.facebook.com/v2.3/1324855987/picture" class="article-author-thumb" alt="">
+			</div>
+			<div class="article-header-text">
+				<a href="#" class="article-author-name">{0}</a>
+				<div class="article-header-time">{1}</div>
+			</div>
+		</div>
+		<div class="article-doc comment-doc">
+			{2}
+		</div>
+		<div class="article-util">
+		<ul class="article-util-list">
+			<li>
+				<a class="link-modify-article" href="/api/qna/updateAnswer/{3}">수정</a>
+			</li>
+			<li>
+				<a class="link-delete-article2" href="/api/questions/{3}/answers/{4}">삭제</a>
+			</li>
+		</ul>
+		</div>
+	</article>
+</script>
 {{> /include/footer}}
 	</body>
 </html>

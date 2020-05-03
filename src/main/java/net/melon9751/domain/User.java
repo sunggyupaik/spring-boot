@@ -6,32 +6,32 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
-public class User {
-	@Id 
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
-	private Long Id;
+public class User extends AbstractEntity {
+//	@Id 
+//	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+//	private Long Id;
 	
 	//primarykey를 지정한다. = Id
 	//데이터베이스에서 id값을 자동으로 +1씩 시켜 준다. = GeneratedValue
 	
 	//null값이 들어갈 수 없음을 의미한다. default는 true이다. = Column
-	@Column(nullable=false, length=20) 
+	@Column(nullable=false, length=20)
+	
+	@JsonProperty
 	private String userId;
 	
+	@JsonIgnore
 	private String password;
+	
+	@JsonProperty
 	private String name;
+	
+	@JsonProperty
 	private String email;
-	
-	public Long getId() {
-		return Id;
-	}
-	
-	public boolean matchId(Long newId) {
-		if(newId == null)
-			return false;
-		return Id.equals(newId);
-	}
 	
 	public String getUserId() {
 		return userId;
@@ -71,10 +71,17 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public boolean matchId(Long newId) {
+		if(newId == null)
+			return false;
+		
+		return newId.equals(getId());
+	}
 
 	@Override
 	public String toString() {
-		return "User [Id=" + Id + ", userId=" + userId + ", password=" + password + ", name=" + name + ", email="
+		return "User [" + super.toString() + ", userId=" + userId + ", password=" + password + ", name=" + name + ", email="
 				+ email + "]";
 	}
 
@@ -84,31 +91,6 @@ public class User {
 		this.name = newUser.name;
 		this.email = newUser.email;
 		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((Id == null) ? 0 : Id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (Id == null) {
-			if (other.Id != null)
-				return false;
-		} else if (!Id.equals(other.Id))
-			return false;
-		return true;
 	}
 	
 	
